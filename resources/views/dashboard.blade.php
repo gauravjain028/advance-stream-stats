@@ -41,10 +41,9 @@
                     <div class="flex flex-wrap -m-4 text-center">
                         <h2 class="text-gray-900 text-lg font-bold text-left">Subscriptions</h2>
                         @foreach ($subscriptions as $subscription)
-                            <form id="payment-form1" action="{{route('subscription.cancel')}}" method="post">
+                            <form id="subscription-form-{{$subscription->id}}" action="{{route('subscription.cancel', $subscription->id)}}" method="post">
                                 @csrf
                                 @method('DELETE')
-                                <input type="hidden" name="id" value="{{$subscription->id}}" />
                                 <div class="p-4 sm:w-1/2 lg:w-1/3 w-full ">
                                     <div class=" flex items-center  justify-between p-4  rounded-lg bg-white shadow-indigo-50 shadow-md">
                                         <div>
@@ -71,13 +70,14 @@
         braintree.dropin.create({
             authorization: '{{$clientToken}}',
             container: '#dropin-container',
-            
+            paypal: {
+                flow: 'vault'
+            }
         }, (error, dropinInstance) => {
             if (error) console.error(error);
 
             form.addEventListener('submit', event => {
                 event.preventDefault();
-
                 dropinInstance.requestPaymentMethod((error, payload) => {
                 if (error) console.error(error);
 

@@ -7,13 +7,29 @@ use Illuminate\Http\Request;
 
 class SubscriptionController extends Controller
 {
+    /**
+     * Reference to instance of Braintree Gateway.
+     * 
+     * @var \App\Services\Gateways\Braintree
+     */
     protected Braintree $braintree;
 
+    /**
+     * Constructor
+     * 
+     * @param \App\Services\Gateways\Braintree $braintree
+     */
     public function __construct(Braintree $braintree)
     {
         $this->braintree = $braintree;    
     }
 
+    /**
+     * Subscribe to a plan.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
     public function subscribe(Request $request)
     {
         $this->validate($request, [
@@ -21,21 +37,23 @@ class SubscriptionController extends Controller
             'plan_id' => 'required|string',
         ]);
 
-        $result = $this->braintree->subscription()->create([
-            'paymentMethodNonce' => $request->input('nonce'),
-            'planId' =>  $request->input('plan_id'),
-        ]);
+        $result = $this->braintree->subscribe(
+            $request->input('nonce'),
+            $request->input('plan_id'),
+        );
 
         return redirect(route('dashboard'));
     }
 
-    public function cancel(Request $request)
+    /**
+     * Cancel the subscription.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
+     */
+    public function cancel(Request $request, string $id)
     {
-        $this->validate($request, [
-            'id'  => 'required|string',
-        ]);
-
-        $result = $this->braintree->subscription()->cancel($request->input('id'));
+        $result = $this->braintree->cancelSubscription($id);
 
         return redirect(route('dashboard'));
     }

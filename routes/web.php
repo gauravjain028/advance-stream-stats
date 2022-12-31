@@ -23,7 +23,7 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/subscription', [SubscriptionController::class, 'subscribe'])->name('subscription.subscribe');
-    Route::delete('/subscription', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
+    Route::delete('/subscription/{id}', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
